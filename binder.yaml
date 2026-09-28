@@ -1,0 +1,14 @@
+entities:
+  - protein:
+      id: B
+      sequence: 80..140        # variable-length binder, 80–140 aa
+
+  - file:
+      path: 1alu.cif           # path is relative to THIS yaml file
+      include:
+        - chain:
+            id: A
+      binding_types:
+        - chain:
+            id: A
+            binding: 45,67,89  # hotspot residues (label_seq_id, NOT auth numbering)

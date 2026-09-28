@@ -82,8 +82,23 @@ image = (
     .apt_install("wget", "git", "gcc", "g++")
     # NB: keep this as pip_install — uv's strict build isolation breaks pandas'
     # legacy pkg_resources dependency when building via colabfold's git source.
+    #
+    # The pinned ColabFold commit ships no pyproject.toml, so pip builds it with
+    # the legacy setuptools backend and runs a setup.py that imports
+    # pkg_resources. setuptools 81 deprecated pkg_resources and later releases
+    # dropped it, and pip's ISOLATED build env always installs the newest
+    # setuptools — so this started failing with
+    #   ModuleNotFoundError: No module named 'pkg_resources'
+    # on an unchanged pin. pip honours PIP_CONSTRAINT when resolving build
+    # dependencies, which pins setuptools inside that isolated env without
+    # resorting to --no-build-isolation (that would need every build dep
+    # present in the image and trades one breakage for another).
+    # echo, not printf: a \n inside the command string becomes a real newline
+    # in the generated Dockerfile RUN line and fails to parse.
+    .run_commands("echo 'setuptools<81' > /etc/pip-constraints.txt")
     .pip_install(
-        "colabfold[alphafold-minus-jax]@git+https://github.com/sokrypton/ColabFold@acc0bf772f22feb7f887ad132b7313ff415c8a9f"
+        "colabfold[alphafold-minus-jax]@git+https://github.com/sokrypton/ColabFold@acc0bf772f22feb7f887ad132b7313ff415c8a9f",
+        env={"PIP_CONSTRAINT": "/etc/pip-constraints.txt"},
     )
     .micromamba_install(
         "kalign2=2.04", "hhsuite=3.3.0", channels=["conda-forge", "bioconda"]

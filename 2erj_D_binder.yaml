@@ -1,0 +1,23 @@
+entities:
+  # De novo binder: variable-length chain, length sampled 80-140 aa
+  - protein:
+      id: B
+      sequence: 80..140
+
+  # Target: interleukin-2 (chain D of the IL-2R quaternary complex, PDB 2ERJ).
+  # Receptor subunits A/B/C are deliberately NOT included, so the binder is
+  # designed against free IL-2 with the CD25 epitope unoccupied.
+  - file:
+      path: 2erj.cif          # file refs are relative to THIS yaml
+      include:
+        - chain:
+            id: D
+
+      # Bind the IL-2Ralpha (CD25) epitope. Indices are label_seq_id, 1-based
+      # (== auth_seq_id for this structure). Derived from a 4.5 A contact
+      # analysis of chain D vs chain A; includes the classic hotspots
+      # F42/K43/F44/Y45/E61/E62.
+      binding_types:
+        - chain:
+            id: D
+            binding: 35,37,38,41,42,43,44,45,61,62,64,65,68,69,72,105,107

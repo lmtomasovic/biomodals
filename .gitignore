@@ -1,1 +1,19 @@
 __pycache__/
+
+# macOS
+.DS_Store
+
+# Run outputs and design artifacts
+out/
+
+# Adaptyv/Twist wet-lab benchmark tables - third-party data, not ours to publish
+benchmark/
+
+# Physics scoring package - upstream ProteinBase_Analysis has no LICENSE,
+# so its vendored code is not redistributable. Kept local only.
+proteinbase/
+
+# Large structure downloads (fetch from RCSB instead)
+*.cif
+!2erj.cif
+!1alu.cif
